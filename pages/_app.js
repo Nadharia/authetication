@@ -1,21 +1,19 @@
-import Layout from "@/components/Layout";
 import "@/styles/globals.css";
-import { useRouter } from "next/router";
+import Layout from "@/components/Layout";
 
-export default function MyApp({ Component, pageProps }) {
-  const router = useRouter();
+// Lista de rutas que **usan** layout
+const routesWithLayout = ["/profile","/signo"];
 
-  // Rutas donde NO querés aplicar el layout
-  const noLayoutRoutes = ["/", "/register"];
+export default function MyApp({ Component, pageProps, router }) {
+  const useLayout = routesWithLayout.includes(router.pathname);
 
-  // Si la ruta actual está en esa lista, no usar Layout
-  const isExcluded = noLayoutRoutes.includes(router.pathname);
-
-  return isExcluded ? (
-    <Component {...pageProps} />
-  ) : (
+  const PageContent = useLayout ? (
     <Layout>
       <Component {...pageProps} />
     </Layout>
+  ) : (
+    <Component {...pageProps} />
   );
+
+  return PageContent;
 }

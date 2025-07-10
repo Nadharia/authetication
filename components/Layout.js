@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { profile } from "./services/auth";
+import Search from "./Search";
+import Login from "./login";
+
 
 export default function Layout({ children }) {
   const [user, setUser] = useState(null);
@@ -18,21 +21,20 @@ export default function Layout({ children }) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-black">Mi App</h1>
-        {user && (
-          <p className="text-sm text-gray-600">Hola, {user.email}</p>
-        )}
-      </header>
+  <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
+    <header className="bg-white shadow p-4 shrink-0 flex flex-col gap-4">
+  <div className="flex items-center justify-between">
+    <h1 className="text-xl font-bold text-black">Mi App</h1>
+    <Login isActive={true} />
+  </div>
+  <div className="flex justify-center">
+    <Search />
+  </div>
+</header>
 
-      <main className="flex-grow p-4">{children}</main>
 
-      <footer className="bg-gray-200 text-center p-2">
-        <p className="text-sm text-black">
-          © 2025 - Todos los derechos reservados
-        </p>
-      </footer>
-    </div>
-  );
+    <main className="flex-grow overflow-hidden">{children}</main>
+  </div>
+);
+
 }
