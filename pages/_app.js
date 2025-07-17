@@ -1,11 +1,11 @@
 import "@/styles/globals.css";
 import Layout from "@/components/Layout";
-
-// Lista de rutas que **usan** layout
-const routesWithLayout = ["/profile","/signo"];
+const routesWithLayout = ["/profile", "/dashboard", "/signo"];
 
 export default function MyApp({ Component, pageProps, router }) {
-  const useLayout = routesWithLayout.includes(router.pathname);
+  const useLayout = routesWithLayout.some((path) =>
+    router.pathname.startsWith(path)
+  );
 
   const PageContent = useLayout ? (
     <Layout>
