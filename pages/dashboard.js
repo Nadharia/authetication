@@ -1,61 +1,6 @@
 import Image from "next/image";
 
 
-const cookie = require('cookie');
-
-export async function getServerSideProps({ req }) {
-  const cookies = cookie.parse(req.headers.cookie || '');
-  const token = cookies.token;
-
-  /*
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-  */
-
-  try {
-    const res = await fetch("http://localhost:4000/api/profile", {
-      headers: {
-        Cookie: `token=${token}`, 
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error("Token inválido");
-    }
-
-    const data = await res.json();
-
-    return {
-      props: {
-        user: data.user,
-        message: "Inicio exitoso",
-      },
-    };
-  } catch (error) {
-    console.error("Error al validar token:", error.message);
-
-    return {
-      props: {
-        user: null,
-        message: "Token inválido o no presente",
-      },
-      
-      /*
-      redirect: {
-        destination: "/profile",
-        permanent: false,
-      },
-      */
-    };
-  }
-}
-
 
 
 

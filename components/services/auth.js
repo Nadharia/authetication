@@ -32,3 +32,4 @@ export async function profile() {
 
   return await res.json();
 }
+
