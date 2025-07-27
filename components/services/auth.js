@@ -10,17 +10,21 @@ export async function registerUser(data){
 }
 
     export async function loginUser(data) {
-        const res=await fetch("http://localhost:8080/auth/login",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(data),
-            credentials: "include",
-        });
-        if(!res.ok) throw new Error("Error al logearse");
-        const datares = await res.json();
-        console.log(datares.message);
-    
-    }
+  const res = await fetch("http://localhost:8080/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Error al logearse");
+
+  const datares = await res.json();
+  console.log(datares.message);
+
+  return datares; // <-- retorná todo el JSON con rol
+}
+
 
 export async function profile() {
   const res = await fetch("http://localhost:4000/api/profile", {
