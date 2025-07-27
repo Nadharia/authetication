@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 export default function Diccionario() {
+  const router = useRouter();
+  const { search } = router.query;
   const [signos, setSignos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // Añadido el estado para error
 
   useEffect(() => {
     const fetchSignos = async () => {
       try {
         setLoading(true);
-        setError(null);
+        setError(null); // Resetear error al iniciar nueva carga
 
-        const response = await fetch("http://localhost:8080/api/signos");
+        const url = search
+          ? `http://localhost:8080/api/signos?query=${encodeURIComponent(
+              search
+            )}`
+          : "http://localhost:8080/api/signos";
+
+        const response = await fetch(url);
 
         if (!response.ok) {
           throw new Error(`Error HTTP: ${response.status}`);
@@ -26,15 +35,15 @@ export default function Diccionario() {
 
         setSignos(data);
       } catch (err) {
-        console.error("Error al cargar signos:", err);
-        setError(err.message);
+        console.error("Error:", err);
+        setError(err.message); // Establecer el mensaje de error
       } finally {
         setLoading(false);
       }
     };
 
     fetchSignos();
-  }, []);
+  }, [search]);
 
   const handleImageError = (e) => {
     e.target.onerror = null;
@@ -69,8 +78,14 @@ export default function Diccionario() {
   if (signos.length === 0) {
     return (
       <div className="min-h-[calc(100vh-96px)] bg-gray-50 flex flex-col items-center justify-center">
-        <p className="text-rose-700 text-xl">No se encontraron signos</p>
-        <p className="text-gray-500 text-sm">La lista está vacía</p>
+        <p className="text-rose-700 text-xl">
+          {search
+            ? "No se encontraron coincidencias"
+            : "No hay signos disponibles"}
+        </p>
+        <p className="text-gray-500 text-sm">
+          {search ? `Para "${search}"` : "La lista está vacía"}
+        </p>
       </div>
     );
   }
@@ -85,6 +100,11 @@ export default function Diccionario() {
         <p className="text-rose-100 text-center max-w-2xl">
           Explora los signos de la Lengua de Señas Argentina
         </p>
+        {search && (
+          <span className="block text-lg font-normal mt-2">
+            Resultados para: "{search}"
+          </span>
+        )}
       </div>
 
       {/* Grid de signos */}

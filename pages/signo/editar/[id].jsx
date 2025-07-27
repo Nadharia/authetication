@@ -1,46 +1,86 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-export default function CreateSigno() {
-  const [palabra, setPalabra] = useState("");
-  const [definicion, setDefinicion] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [letra, setLetra] = useState("");
-  const [urls, setUrls] = useState([""]);
+export default function EditarSigno() {
+  const [formData, setFormData] = useState({
+    palabra: "",
+    definicion: "",
+    categoria: "",
+    letra: "",
+    urls: [""],
+  });
   const [loading, setLoading] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [error, setError] = useState(null); // Nuevo estado para el error
-
+  const [error, setError] = useState(null);
   const router = useRouter();
+  const { id } = router.query;
+
+  // Cargar datos del signo al montar el componente
+  useEffect(() => {
+    if (id) {
+      const cargarSigno = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/signos/${id}`
+          );
+          if (!response.ok) {
+            throw new Error("Error al cargar el signo");
+          }
+          const data = await response.json();
+          setFormData({
+            palabra: data.palabra,
+            definicion: data.definicion,
+            categoria: data.categoria,
+            letra: data.letra,
+            urls: data.urls || [""],
+          });
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+      cargarSigno();
+    }
+  }, [id]);
 
   const handleUrlChange = (index, value) => {
-    const newUrls = [...urls];
+    const newUrls = [...formData.urls];
     newUrls[index] = value;
-    setUrls(newUrls);
+    setFormData({ ...formData, urls: newUrls });
   };
 
-  const handleAddUrl = () => setUrls([...urls, ""]);
+  const handleAddUrl = () =>
+    setFormData({ ...formData, urls: [...formData.urls, ""] });
+
   const handleRemoveUrl = (index) => {
-    const newUrls = [...urls];
+    const newUrls = [...formData.urls];
     newUrls.splice(index, 1);
-    setUrls(newUrls);
+    setFormData({ ...formData, urls: newUrls });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === "letra" ? value.toUpperCase() : value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Limpiamos errores previos
+    setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/api/signos", {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/api/signos/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
-          palabra,
-          definicion,
-          categoria,
-          letra,
-          urls: urls.filter((url) => url.trim() !== ""),
+          ...formData,
+          urls: formData.urls.filter((url) => url.trim() !== ""),
         }),
       });
 
@@ -49,7 +89,6 @@ export default function CreateSigno() {
         throw new Error(errorData.message || "Error al actualizar el signo");
       }
 
-      // Solo mostramos modal en caso de éxito
       setMostrarModal(true);
     } catch (err) {
       setError(err.message || "Hubo un error al actualizar el signo");
@@ -60,7 +99,7 @@ export default function CreateSigno() {
 
   const handleCerrarModal = () => {
     setMostrarModal(false);
-    router.push(`/signo/${encodeURIComponent(palabra)}`);
+    router.push(`/signo/${encodeURIComponent(formData.palabra)}`);
   };
 
   return (
@@ -102,8 +141,9 @@ export default function CreateSigno() {
               </label>
               <input
                 type="text"
-                value={palabra}
-                onChange={(e) => setPalabra(e.target.value)}
+                name="palabra"
+                value={formData.palabra}
+                onChange={handleChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400"
               />
@@ -115,8 +155,9 @@ export default function CreateSigno() {
               </label>
               <input
                 type="text"
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
+                name="categoria"
+                value={formData.categoria}
+                onChange={handleChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400"
               />
@@ -128,9 +169,10 @@ export default function CreateSigno() {
               </label>
               <input
                 type="text"
+                name="letra"
                 maxLength={1}
-                value={letra}
-                onChange={(e) => setLetra(e.target.value.toUpperCase())}
+                value={formData.letra}
+                onChange={handleChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg text-center uppercase focus:ring-2 focus:ring-rose-400"
               />
@@ -143,8 +185,9 @@ export default function CreateSigno() {
               Definición
             </label>
             <textarea
-              value={definicion}
-              onChange={(e) => setDefinicion(e.target.value)}
+              name="definicion"
+              value={formData.definicion}
+              onChange={handleChange}
               required
               rows="4"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400"
@@ -157,7 +200,7 @@ export default function CreateSigno() {
               URLs de imágenes
             </label>
             <div className="space-y-3">
-              {urls.map((url, index) => (
+              {formData.urls.map((url, index) => (
                 <div key={index} className="flex gap-2">
                   <input
                     type="text"
@@ -166,7 +209,7 @@ export default function CreateSigno() {
                     onChange={(e) => handleUrlChange(index, e.target.value)}
                     className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400"
                   />
-                  {urls.length > 1 && (
+                  {formData.urls.length > 1 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveUrl(index)}
@@ -194,7 +237,7 @@ export default function CreateSigno() {
               disabled={loading}
               className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md disabled:opacity-50"
             >
-              {loading ? "Creando..." : "Crear Signo"}
+              {loading ? "Actualizando..." : "Actualizar Signo"}
             </button>
           </div>
         </form>
@@ -224,7 +267,7 @@ export default function CreateSigno() {
               ¡Signo actualizado!
             </h2>
             <p className="text-gray-600">
-              El signo "{palabra}" ha sido actualizado correctamente.
+              El signo "{formData.palabra}" ha sido actualizado correctamente.
             </p>
 
             <button
