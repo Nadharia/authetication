@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
 import classNames from "classnames";
+import { useUser } from "@/components/UserContext";
 
 export default function Login({ isActive = true, isLoggedIn }) {
   const router = useRouter();
+  const { user, setUser } = useUser();
 
   const loginClass = classNames(
     "h-8 px-4 rounded text-xs",
@@ -12,21 +14,52 @@ export default function Login({ isActive = true, isLoggedIn }) {
     }
   );
 
-  const handleClick = () => {
+  const handleLoginClick = () => {
     if (!isLoggedIn && isActive) {
-      router.push("/");
+      router.push("/login");
     }
-    // Si querés, podés agregar else para logout o nada.
   };
 
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Error al desloguear");
+      setUser(null);
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <button
+        onClick={handleLoginClick}
+        className={loginClass}
+        disabled={!isActive}
+        title="Ir a login"
+      >
+        Iniciar Sesión
+      </button>
+    );
+  }
+
+  // Si está logueado mostramos nombre y botón logout
   return (
-    <button
-      onClick={handleClick}
-      className={loginClass}
-      disabled={!isActive}
-      title={isLoggedIn ? "Ya estás logueado" : "Ir a login"}
-    >
-      {isLoggedIn ? "Bienvenido" : "Iniciar Sesión"}
-    </button>
+    <div className="flex items-center gap-2">
+      <span className="text-sm font-semibold text-black">
+        Hola, {user?.username}
+      </span>
+      <button
+        onClick={handleLogout}
+        className="bg-gray-600 text-white px-3 py-1 rounded hover:bg-black transition text-xs"
+        title="Cerrar sesión"
+      >
+        Logout
+      </button>
+    </div>
   );
 }
