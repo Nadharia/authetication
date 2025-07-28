@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/components/UserContext";
-import { ImSpinner8 } from "react-icons/im";
+import { TrashIcon, UserIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
 export async function allUsers() {
   const res = await fetch("http://localhost:8080/admin/obtenerusuarios", {
@@ -23,7 +23,6 @@ async function deleteUser(id) {
 }
 
 function RolBadge({ rol }) {
-  // Normalizamos a minúsculas para evitar problemas
   const role = rol?.toLowerCase();
 
   const baseClass = "px-3 py-1 rounded-full text-xs font-semibold select-none";
@@ -80,7 +79,6 @@ export default function ListaUsuarios() {
   if (userLoading || loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <ImSpinner8 className="animate-spin text-red-600 text-4xl mb-4" />
         <p className="text-gray-700 text-lg">Cargando usuarios...</p>
       </div>
     );
@@ -88,13 +86,12 @@ export default function ListaUsuarios() {
 
   if (!user || user.rol.toLowerCase() !== "admin") {
     return (
-      <div className="flex items-center justify-center min-h-screen text-red-600 text-xl font-bold">
+      <div className="flex items-center justify-center min-h-screen text-red-600 text-xl font-bold px-4 text-center">
         Acceso denegado. Solo el administrador puede ver esta página.
       </div>
     );
   }
 
-  // Filtro por búsqueda (user o email)
   const usuariosFiltrados = usuarios.filter((u) => {
     const texto = search.toLowerCase();
     return (
@@ -125,20 +122,24 @@ export default function ListaUsuarios() {
         {usuariosFiltrados.length === 0 && (
           <p className="text-center text-gray-500">No se encontraron usuarios.</p>
         )}
+
         {usuariosFiltrados.map((usuario) => (
           <li
             key={usuario.id}
             className="bg-white rounded-xl shadow-md p-6 flex justify-between items-center border border-gray-300 hover:border-red-600 transition"
           >
-            <div>
-              <p className="font-semibold text-lg">
-                ID:{" "}
-                <span className="font-mono text-red-600">{usuario.id}</span> -{" "}
-                {usuario.username}{" "}
+            <div className="flex flex-col space-y-1 max-w-xs">
+              <p className="font-semibold text-lg truncate">
+                <UserIcon className="inline h-5 w-5 mr-1 text-red-600" />
+                <span className="font-mono text-red-600">{usuario.id}</span> - {usuario.username}{" "}
                 <RolBadge rol={usuario.rol || "N/A"} />
               </p>
-              <p className="text-sm text-gray-600">{usuario.email}</p>
+              <p className="flex items-center text-sm text-gray-600 truncate">
+                <EnvelopeIcon className="inline h-4 w-4 mr-1" />
+                {usuario.email}
+              </p>
             </div>
+
             <button
               aria-label={`Eliminar usuario ${usuario.username}`}
               disabled={deletingId === usuario.id}
@@ -147,13 +148,11 @@ export default function ListaUsuarios() {
               }`}
               onClick={() => handleDelete(usuario.id)}
             >
-              {deletingId === usuario.id ? (
+              {deletingId === usuario.id ? "Eliminando..." : (
                 <>
-                  <ImSpinner8 className="animate-spin" />
-                  Eliminando...
+                  <TrashIcon className="h-5 w-5" />
+                  Eliminar
                 </>
-              ) : (
-                "Eliminar"
               )}
             </button>
           </li>

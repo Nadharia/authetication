@@ -22,7 +22,7 @@ export async function registerUser(data) {
 }
 
 
-   export async function loginUser(data) {
+    export async function loginUser(data) {
   const res = await fetch("http://localhost:8080/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -30,17 +30,12 @@ export async function registerUser(data) {
     credentials: "include",
   });
 
-  if (!res.ok) {
-    // Intenta obtener el mensaje de error del cuerpo JSON
-    const errorData = await res.json().catch(() => null);
-    const errorMessage = errorData?.message || "Error al logearse";
-    throw new Error(errorMessage);
-  }
+  if (!res.ok) throw new Error("Error al logearse");
 
   const datares = await res.json();
   console.log(datares.message);
 
-  return datares;
+  return datares; 
 }
 
 

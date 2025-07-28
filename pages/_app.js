@@ -1,4 +1,6 @@
+import Layout from "@/components/Layout";
 import { UserProvider } from "@/components/UserContext";
+import "@/styles/globals.css";
 const routesWithLayout = ["/dashboard", "/signo","/_usuarios","/register","/logs","/diccionario",
   "/signo/crear",
   "/signo/editar/[id]",];
