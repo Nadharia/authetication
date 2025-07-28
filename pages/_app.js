@@ -1,14 +1,8 @@
-import "@/styles/globals.css";
-import Layout from "@/components/Layout";
-const routesWithLayout = [
-  "/profile",
-  "/dashboard",
-  "/signo",
-  "/_usuarios",
-  "/diccionario",
-  "/signo/crearSigno",
-  "/signo/[palabra]/editarSigno",
-];
+import { UserProvider } from "@/components/UserContext";
+const routesWithLayout = ["/dashboard", "/signo","/_usuarios","/register","/logs","/diccionario",
+  "/signo/crear",
+  "/signo/editar/[id]",];
+
 
 export default function MyApp({ Component, pageProps, router }) {
   const useLayout = routesWithLayout.some((path) =>
@@ -23,5 +17,5 @@ export default function MyApp({ Component, pageProps, router }) {
     <Component {...pageProps} />
   );
 
-  return PageContent;
+    return <UserProvider>{PageContent}</UserProvider>;
 }

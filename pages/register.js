@@ -1,99 +1,168 @@
-import  React,{ useRef, useState } from "react"
+import React, { useRef, useState, useEffect } from "react";
 import { registerUser } from "@/components/services/auth";
-import Link from 'next/link';
+import { useUser } from "@/components/UserContext";
+import { useRouter } from "next/router";
+import { HiOutlineMail, HiLockClosed, HiArrowLeft, HiUser } from "react-icons/hi";
+import { ImSpinner8 } from "react-icons/im";
+
 export default function Register() {
-    
-    const passwordRef=useRef();
-    const passwordConfirm=useRef();
-    const useRefEmail=useRef();
-    const [error,setError]=useState("");
-    const [message,setMessage]=useState("");
-    const handleValidation  = async(e) => {
-            e.preventDefault();
-            
-            const email = useRefEmail.current.value.trim();
-            const password = passwordRef.current.value.trim();
-            const confirm = passwordConfirm.current.value.trim();
+  const usernameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const passwordConfirmRef = useRef();
 
-            if (!email) {
-                setError("El email no puede estar vacío");
-                return;
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                setError("El email no es válido");
-                return;
-            }
-            if (!password) {
-                setError("La contraseña no puede estar vacía");
-                return;
-            }
-            if (password !== confirm) {
-                setError("Las contraseñas tienen que ser iguales");
-                return;
-            }
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-            setError(""); 
+  const { user, loading } = useUser();
+  const router = useRouter();
 
-            try{
-                await registerUser({email,password});
-                setMessage("Registrado correctamente");
-            }
-            catch(err){
-                setError(err.message);
-            }
+  useEffect(() => {
+    if (!loading && (!user || user.rol?.toLowerCase() !== "admin")) {
+      router.push("/");
+    }
+  }, [loading, user, router]);
 
-            
-            };
+  const handleValidation = async (e) => {
+    e.preventDefault();
 
-       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white items-center justify-center shadow w-full max-w-sm p-6">
-                <h1 className="text-2xl font-bold mb-4 text-center text-black p-2 m-2">Register</h1>
-                
-                <form className="  flex flex-col gap-4">
-                    <p className="text-black font-serif">Ingrese el email:</p>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="border border-gray-950 text-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black placeholder-gray-400" ref={useRefEmail}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="border border-gray-950 text-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black placeholder-gray-400" ref={passwordRef}
-                    />
+    const username = usernameRef.current.value.trim();
+    const email = emailRef.current.value.trim();
+    const password = passwordRef.current.value.trim();
+    const confirm = passwordConfirmRef.current.value.trim();
 
-                    <input
-                        type="password"
-                        placeholder="Confirm password"
-                        className="border border-gray-950 text-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-black placeholder-gray-400" ref={passwordConfirm}
-                    />
-                    
-                    <button
-                        type="submit"
-                        className="bg-gray-600 text-white py-2 rounded hover:bg-black transition" onClick={handleValidation}
-                    >
-                        Registrar
-                    </button>
-                    {error ?(<p className="bg-red-400 text-center shadow w-full max-w-sm p-3 rounded text-white font-semibold">
-                    {error}
-                    </p>):null}
-                    {message ?(<p className="bg-green-500 text-center shadow w-full max-w-sm p-3 rounded text-black font-semibold">
-                    {message}
-                    </p>):null}
-                </form>
-                    <p className="text-sm text-black text-center p-6">
-                        ¿Ya tenés cuenta?{" "}
-                        <Link href="/" className="text-red-600 font-bold hover:underline">
-                            Iniciá sesión aquí
-                        </Link>
-                        </p>
+    if (!username || !/^[a-zA-Z0-9._-]+$/.test(username)) {
+      setError("Usuario inválido");
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Email inválido");
+      return;
+    }
+    if (!password) {
+      setError("Contraseña vacía");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    setError("");
+    setIsLoading(true);
+
+    try {
+  await registerUser({ username, email, password });
+
+  setMessage("Usuario registrado correctamente");
+  // Limpiar inputs
+  usernameRef.current.value = "";
+  emailRef.current.value = "";
+  passwordRef.current.value = "";
+  passwordConfirmRef.current.value = "";
+
+  // Mostrar mensaje 2 segundos y luego redirigir
+  setTimeout(() => {
+    setMessage("");
+    router.push("/_usuarios");
+  }, 2000);
+} catch (err) {
+  setError(err.message || "Error en el registro");
+} finally {
+  setIsLoading(false);
+}}
 
 
+  if (loading || !user || user.rol?.toLowerCase() !== "admin") {
+    return <p className="text-center p-6 text-black">Cargando o no autorizado...</p>;
+  }
 
-            </div>
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 relative">
+        <button
+          onClick={() => router.push("/_usuarios")}
+          className="flex items-center gap-2 text-red-700 hover:text-red-900 font-semibold mb-6 transition"
+        >
+          <HiArrowLeft size={20} />
+          Volver
+        </button>
 
+        <h1 className="text-3xl font-extrabold text-center mb-8 text-gray-900">Registrar Usuario</h1>
 
-        </div>
-    )
+        <form className="flex flex-col gap-6" onSubmit={handleValidation} noValidate>
+          <label className="relative block">
+            <HiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Usuario"
+              ref={usernameRef}
+              className="pl-10 w-full border border-gray-300 rounded-lg py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition"
+              required
+            />
+          </label>
+
+          <label className="relative block">
+            <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="email"
+              placeholder="Email"
+              ref={emailRef}
+              className="pl-10 w-full border border-gray-300 rounded-lg py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition"
+              required
+            />
+          </label>
+
+          <label className="relative block">
+            <HiLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              ref={passwordRef}
+              className="pl-10 w-full border border-gray-300 rounded-lg py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition"
+              required
+            />
+          </label>
+
+          <label className="relative block">
+            <HiLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="password"
+              placeholder="Confirmar contraseña"
+              ref={passwordConfirmRef}
+              className="pl-10 w-full border border-gray-300 rounded-lg py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition"
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="w-full bg-red-700 hover:bg-red-800 text-white font-semibold py-3 rounded-lg shadow-md transition flex justify-center items-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <ImSpinner8 className="animate-spin" size={20} />
+                Registrando...
+              </>
+            ) : (
+              "Registrar"
+            )}
+          </button>
+        </form>
+
+        {error && (
+          <p className="mt-6 bg-red-500 text-white rounded-md p-3 text-center font-semibold shadow">
+            {error}
+          </p>
+        )}
+
+        {message && (
+          <p className="mt-6 bg-green-400 text-gray-900 rounded-md p-3 text-center font-semibold shadow">
+            {message}
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }
