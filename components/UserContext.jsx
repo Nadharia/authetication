@@ -31,7 +31,7 @@ export function UserProvider({ children }) {
     const publicPaths = ["/", "/dashboard", "/404", "/logout", "/diccionario"];
 
     // Define rutas privadas donde usuario debe existir, sino 404
-    const privatePaths = ["/_usuarios", "/logs", "/register", "/crear"];
+    const privatePaths = ["/_usuarios", "/logs", "/register", "/crear","/signo/signos",];
 
     const path = router.pathname;
     const isPublic = publicPaths.includes(path);

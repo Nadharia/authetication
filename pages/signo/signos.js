@@ -182,16 +182,16 @@ export default function SignosList() {
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold">Confirmar eliminación</h2>
+              <h2 className="text-xl font-bold text-black">Confirmar eliminación</h2>
             </div>
-            <p className="mb-6">
+            <p className="mb-6 text-black">
               ¿Estás seguro de eliminar el signo "{currentSigno?.palabra}"? Esta
               acción no se puede deshacer.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-black"
               >
                 Cancelar
               </button>

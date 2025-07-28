@@ -90,7 +90,7 @@ export default function Search() {
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-4 items-start">
-      <div className="relative w-full md:w-[400px] h-8">
+      <div className="relative w-full md:w-[800px] h-8">
         <input
           type="text"
           placeholder="Buscar..."
