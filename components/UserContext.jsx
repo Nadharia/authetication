@@ -25,29 +25,21 @@ export function UserProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (loading) return; // espera que cargue el user
+    if (loading) return;
 
-    // Define rutas públicas donde se permite usuario null (redirigir a /)
-    const publicPaths = ["/", "/dashboard", "/404", "/logout", "/diccionario"];
-
-    // Define rutas privadas donde usuario debe existir, sino 404
-    const privatePaths = ["/_usuarios", "/logs", "/register", "/crear","/signo/signos",];
-
+    const publicPaths = ["/", "/dashboard", "/logout", "/diccionario"];
     const path = router.pathname;
-    const isPublic = publicPaths.includes(path);
-    const isPrivate = privatePaths.includes(path);
 
-    if (!user) {
-      if (isPublic) {
-        // Usuario no logueado en ruta pública → redirigir a "/"
-        if (path !== "/") router.replace("/");
-      } else if (isPrivate) {
-        // Usuario no logueado en ruta privada → 404
-        router.replace("/404");
-      } else {
-        // Rutas no definidas → 404
-        router.replace("/404");
-      }
+    const isPublic =
+      publicPaths.includes(path) ||
+      path.startsWith("/signo/"); // Soporte para /diccionario/palabra
+
+    if (!user && !isPublic) {
+      router.replace("/404");
+    }
+
+    if (user && path === "/") {
+      router.replace("/dashboard");
     }
   }, [loading, user, router]);
 

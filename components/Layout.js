@@ -1,5 +1,3 @@
-
-
 import { useState } from "react"
 import { useRouter } from "next/router"
 import classNames from "classnames"
@@ -90,22 +88,18 @@ export default function Layout({ children }) {
           </svg>
         </button>
 
-        {/* Dropdown Panel */}
         <div
           className={`absolute top-full left-0 mt-2 transition-all duration-200 z-50 ${
             dropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
           }`}
         >
           <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden min-w-[280px]">
-            {/* Header */}
             <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <Icon className="w-5 h-5 text-red-600" />
                 <span className="font-medium text-gray-800">{title}</span>
               </div>
             </div>
-
-            {/* Menu Items */}
             <div className="py-1">
               {items.map((item, index) => (
                 <Link key={index} href={item.href} passHref>
@@ -124,12 +118,8 @@ export default function Layout({ children }) {
                 </Link>
               ))}
             </div>
-
-            {/* Footer */}
-            <div className="bg-gray-50 px-4 py-2 border-t border-gray-200">
-              <div className="text-xs text-gray-500 text-center">
-                {isAdmin ? "Panel de Administración" : "Herramientas de Usuario"}
-              </div>
+            <div className="bg-gray-50 px-4 py-2 border-t border-gray-200 text-xs text-gray-500 text-center">
+              {isAdmin ? "Panel de Administración" : "Herramientas de Usuario"}
             </div>
           </div>
         </div>
@@ -138,64 +128,18 @@ export default function Layout({ children }) {
   }
 
   const adminMenuItems = [
-    {
-      href: "/_usuarios",
-      label: "Gestión de Usuarios",
-      description: "Ver y administrar usuarios",
-      icon: UserGroupIcon,
-    },
-    {
-      href: "/logs",
-      label: "Logs del Sistema",
-      description: "Revisar actividad del sistema",
-      icon: ClipboardDocumentListIcon,
-    },
-    {
-      href: "/register",
-      label: "Registrar Usuario",
-      description: "Crear nuevas cuentas",
-      icon: UserPlusIcon,
-    },
-    {
-      href: "/signo/crear",
-      label: "Crear Signo",
-      description: "Agregar nuevo signo al diccionario",
-      icon: PlusIcon,
-    },
-    {
-      href: "/diccionario",
-      label: "Diccionario",
-      description: "Explorar todos los signos",
-      icon: BookOpenIcon,
-    },
-    {
-      href: "/signo/signos",
-      label: "Signos",
-      description: "Listado de signos",
-      icon: BookOpenIcon,
-    },
+    { href: "/_usuarios", label: "Gestión de Usuarios", description: "Ver y administrar usuarios", icon: UserGroupIcon },
+    { href: "/logs", label: "Logs del Sistema", description: "Revisar actividad del sistema", icon: ClipboardDocumentListIcon },
+    { href: "/register", label: "Registrar Usuario", description: "Crear nuevas cuentas", icon: UserPlusIcon },
+    { href: "/signo/crear", label: "Crear Signo", description: "Agregar nuevo signo al diccionario", icon: PlusIcon },
+    { href: "/diccionario", label: "Diccionario", description: "Explorar todos los signos", icon: BookOpenIcon },
+    { href: "/signo/signos", label: "Signos", description: "Listado de signos", icon: BookOpenIcon },
   ]
 
   const userMenuItems = [
-    {
-      href: "/signo/crear",
-      label: "Crear Signo",
-      description: "Agregar nuevo signo al diccionario",
-      icon: PlusIcon,
-    },
-    {
-      href: "/diccionario",
-      label: "Diccionario",
-      description: "Explorar todos los signos",
-      icon: BookOpenIcon,
-    },
-
-    {
-      href: "/signo/signos",
-      label: "Signos",
-      description: "Listado de signos",
-      icon: BookOpenIcon,
-    },
+    { href: "/signo/crear", label: "Crear Signo", description: "Agregar nuevo signo al diccionario", icon: PlusIcon },
+    { href: "/diccionario", label: "Diccionario", description: "Explorar todos los signos", icon: BookOpenIcon },
+    { href: "/signo/signos", label: "Signos", description: "Listado de signos", icon: BookOpenIcon },
   ]
 
   return (
@@ -210,13 +154,30 @@ export default function Layout({ children }) {
             </Link>
 
             <div className="hidden md:flex items-center space-x-3">
-              {user && (
+              {user ? (
                 <DropdownMenu
                   title={user.rol?.toLowerCase() === "admin" ? "Administración" : "Herramientas"}
                   icon={user.rol?.toLowerCase() === "admin" ? CogIcon : DocumentTextIcon}
                   items={user.rol?.toLowerCase() === "admin" ? adminMenuItems : userMenuItems}
                   isAdmin={user.rol?.toLowerCase() === "admin"}
                 />
+              ) : (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-red-700"
+                  >
+                    <DocumentTextIcon className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/diccionario"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-red-700"
+                  >
+                    <BookOpenIcon className="w-4 h-4" />
+                    Diccionario
+                  </Link>
+                </>
               )}
               <Login isActive={true} isLoggedIn={!!user} />
             </div>
@@ -227,54 +188,74 @@ export default function Layout({ children }) {
               aria-label="Toggle menu"
             >
               <div className="relative w-6 h-6">
-                <span
-                  className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 ${menuOpen ? "rotate-45 top-3" : "top-1"}`}
-                ></span>
-                <span
-                  className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 top-3 ${menuOpen ? "opacity-0" : "opacity-100"}`}
-                ></span>
-                <span
-                  className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 ${menuOpen ? "-rotate-45 top-3" : "top-5"}`}
-                ></span>
+                <span className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 ${menuOpen ? "rotate-45 top-3" : "top-1"}`}></span>
+                <span className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 top-3 ${menuOpen ? "opacity-0" : "opacity-100"}`}></span>
+                <span className={`absolute block w-6 h-0.5 bg-current transition-all duration-200 ${menuOpen ? "-rotate-45 top-3" : "top-5"}`}></span>
               </div>
             </button>
           </div>
 
-          {/* Mobile menu */}
-          <div
-            className={`md:hidden overflow-hidden transition-all duration-200 ${menuOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"}`}
-          >
+          <div className={`md:hidden overflow-hidden transition-all duration-200 ${menuOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
             <div className="pb-4 space-y-3">
-              {/* Mobile Menu Items */}
               <div className="bg-black rounded-lg p-4">
-                <h3 className="text-white font-medium mb-3 flex items-center gap-2">
-                  {user?.rol?.toLowerCase() === "admin" ? (
-                    <>
-                      <CogIcon className="w-5 h-5" />
-                      Administración
-                    </>
-                  ) : (
-                    <>
+                {user ? (
+                  <>
+                    <h3 className="text-white font-medium mb-3 flex items-center gap-2">
+                      {user.rol?.toLowerCase() === "admin" ? (
+                        <>
+                          <CogIcon className="w-5 h-5" />
+                          Administración
+                        </>
+                      ) : (
+                        <>
+                          <DocumentTextIcon className="w-5 h-5" />
+                          Herramientas
+                        </>
+                      )}
+                    </h3>
+                    <div className="space-y-2">
+                      {(user.rol?.toLowerCase() === "admin" ? adminMenuItems : userMenuItems).map((item, index) => (
+                        <Link key={index} href={item.href} passHref>
+                          <div className="flex items-center gap-5 p-3 rounded-lg bg-black hover:bg-gray-600 text-white transition-colors duration-150 cursor-pointer">
+                            <item.icon className="w-4 h-4" />
+                            <div>
+                              <div className="font-medium text-sm">{item.label}</div>
+                              <div className="text-xs text-gray-300">{item.description}</div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-white font-medium mb-3 flex items-center gap-2">
                       <DocumentTextIcon className="w-5 h-5" />
-                      Herramientas
-                    </>
-                  )}
-                </h3>
-                <div className="space-y-2">
-                  {(user?.rol?.toLowerCase() === "admin" ? adminMenuItems : userMenuItems).map((item, index) => (
-                    <Link key={index} href={item.href} passHref>
-                      <div className="flex items-center gap-5 p-3 rounded-lg bg-black hover:bg-gray-600 text-white transition-colors duration-150 cursor-pointer">
-                        <item.icon className="w-4 h-4" />
-                        <div>
-                          <div className="font-medium text-sm">{item.label}</div>
-                          <div className="text-xs text-gray-300">{item.description}</div>
+                      Navegación
+                    </h3>
+                    <div className="space-y-2">
+                      <Link href="/dashboard" passHref>
+                        <div className="flex items-center gap-5 p-3 rounded-lg bg-black hover:bg-gray-600 text-white transition-colors duration-150 cursor-pointer">
+                          <DocumentTextIcon className="w-4 h-4" />
+                          <div>
+                            <div className="font-medium text-sm">Dashboard</div>
+                            <div className="text-xs text-gray-300">Resumen del sistema</div>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      </Link>
+                      <Link href="/diccionario" passHref>
+                        <div className="flex items-center gap-5 p-3 rounded-lg bg-black hover:bg-gray-600 text-white transition-colors duration-150 cursor-pointer">
+                          <BookOpenIcon className="w-4 h-4" />
+                          <div>
+                            <div className="font-medium text-sm">Diccionario</div>
+                            <div className="text-xs text-gray-300">Explorar los signos</div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  </>
+                )}
               </div>
-
               <div className="pt-2 border-t border-gray-700">
                 <Login isActive={true} isLoggedIn={!!user} />
               </div>

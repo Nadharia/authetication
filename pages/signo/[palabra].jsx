@@ -6,6 +6,8 @@ import classNames from "classnames";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+const FALLBACK_IMAGE = "/fail.png";
+
 export default function Signo() {
   const router = useRouter();
   const { palabra } = router.query;
@@ -21,15 +23,12 @@ export default function Signo() {
     setLoading(true);
     setError(null);
 
-    fetch(
-      `http://localhost:8080/api/signos?query=${encodeURIComponent(palabra)}`
-    )
+    fetch(`http://localhost:8080/api/signos?query=${encodeURIComponent(palabra)}`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al cargar el significado");
         return res.json();
       })
       .then((data) => {
-        // Parsear el campo urls si viene como string JSON
         const processed = data.map((s) => ({
           ...s,
           urls: typeof s.urls === "string" ? JSON.parse(s.urls) : s.urls,
@@ -38,6 +37,7 @@ export default function Signo() {
         const exactMatch = processed.find(
           (s) => s.palabra?.toLowerCase() === palabra.toLowerCase()
         );
+
         if (exactMatch) {
           setSigno(exactMatch);
           setMainImageIndex(0);
@@ -55,18 +55,21 @@ export default function Signo() {
       .finally(() => setLoading(false));
   }, [palabra]);
 
-  // Rotar imagen principal automáticamente si hay más de una imagen
   useEffect(() => {
     if (!signo?.urls || signo.urls.length < 2) return;
 
     const interval = setInterval(() => {
       setMainImageIndex((prevIndex) => (prevIndex + 1) % signo.urls.length);
-    }, 4000); // cada 4 segundos
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [signo]);
 
   const mainImage = signo?.urls?.[mainImageIndex] || null;
+
+  const handleImageError = (e) => {
+    e.target.src = FALLBACK_IMAGE;
+  };
 
   const carouselSettings = {
     dots: false,
@@ -92,10 +95,9 @@ export default function Signo() {
     : "No disponible";
 
   return (
-    <div className="min-h-[calc(100vh-96px)] bg-gray-50 text-gray-900 flex flex-col gap-10 p-6 lg:p-12">
+    <div className="min-h-[calc(100vh-96px)] bg-gray-50 text-gray-900 flex flex-col gap-10 p-4 sm:p-6 lg:p-12">
       {/* Palabra y imagen */}
       <div className="relative bg-rose-700 rounded-xl shadow-xl p-4 lg:p-6 flex flex-col items-center justify-center text-white">
-        {/* Palabra flotante */}
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-rose-900 bg-opacity-90 px-6 py-3 rounded-xl shadow-md font-mono text-2xl sm:text-4xl font-bold z-[1] max-w-[90%] text-center whitespace-nowrap overflow-hidden text-ellipsis">
           {palabra?.toUpperCase() || "..."}
         </div>
@@ -105,12 +107,15 @@ export default function Signo() {
           <img
             src={mainImage}
             alt="Imagen principal"
+            onError={handleImageError}
             className="mt-20 w-full max-w-5xl h-72 sm:h-96 object-contain rounded-lg bg-white transition-all duration-500"
           />
         ) : (
-          <p className="mt-24 text-white text-lg font-semibold">
-            No hay imágenes disponibles
-          </p>
+          <img
+            src={FALLBACK_IMAGE}
+            alt="Imagen fallback"
+            className="mt-20 w-full max-w-5xl h-72 sm:h-96 object-contain rounded-lg bg-white transition-all duration-500"
+          />
         )}
 
         {/* Carrusel miniaturas */}
@@ -121,6 +126,7 @@ export default function Signo() {
                 <div key={index} className="p-2">
                   <img
                     src={url}
+                    onError={handleImageError}
                     alt={`Miniatura ${index + 1}`}
                     className={classNames(
                       "rounded-lg border-4 transition duration-300 cursor-pointer",
