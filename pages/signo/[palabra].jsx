@@ -21,7 +21,9 @@ export default function Signo() {
     setLoading(true);
     setError(null);
 
-    fetch(`http://localhost:8080/api/signos?query=${encodeURIComponent(palabra)}`)
+    fetch(
+      `http://localhost:8080/api/signos?query=${encodeURIComponent(palabra)}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Error al cargar el significado");
         return res.json();
@@ -106,7 +108,9 @@ export default function Signo() {
             className="mt-20 w-full max-w-5xl h-72 sm:h-96 object-contain rounded-lg bg-white transition-all duration-500"
           />
         ) : (
-          <p className="mt-24 text-white text-lg font-semibold">No hay imágenes disponibles</p>
+          <p className="mt-24 text-white text-lg font-semibold">
+            No hay imágenes disponibles
+          </p>
         )}
 
         {/* Carrusel miniaturas */}
@@ -120,7 +124,9 @@ export default function Signo() {
                     alt={`Miniatura ${index + 1}`}
                     className={classNames(
                       "rounded-lg border-4 transition duration-300 cursor-pointer",
-                      index === mainImageIndex ? "border-amber-400" : "border-transparent",
+                      index === mainImageIndex
+                        ? "border-amber-400"
+                        : "border-transparent",
                       "object-contain h-20 w-full"
                     )}
                     loading="lazy"
@@ -135,17 +141,27 @@ export default function Signo() {
 
       {/* Significado */}
       <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 max-w-3xl mx-auto text-left">
-        <h2 className="text-3xl font-extrabold mb-6 text-rose-700">Significado</h2>
+        <h2 className="text-3xl font-extrabold mb-6 text-rose-700">
+          Significado
+        </h2>
 
         {loading && <p className="text-gray-500 text-lg">Cargando...</p>}
         {error && <p className="text-red-600 text-lg">{error}</p>}
 
         {!loading && signo && (
           <div className="space-y-4 text-base sm:text-lg">
-            <p><strong>Definición:</strong> {signo.definicion}</p>
-            <p><strong>Categoría:</strong> {signo.categoria}</p>
-            <p><strong>Letra:</strong> {signo.letra}</p>
-            <p><strong>Fecha de alta:</strong> {fechaFormateada}</p>
+            <p>
+              <strong>Definición:</strong> {signo.definicion}
+            </p>
+            <p>
+              <strong>Categoría:</strong> {signo.categoria}
+            </p>
+            <p>
+              <strong>Letra:</strong> {signo.letra}
+            </p>
+            <p>
+              <strong>Fecha de alta:</strong> {fechaFormateada}
+            </p>
           </div>
         )}
       </div>
