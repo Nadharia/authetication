@@ -2,7 +2,7 @@
 import "@/styles/globals.css";
 import Layout from "@/components/Layout";
 import { UserProvider } from "@/components/UserContext";
-const routesWithLayout = ["/profile", "/dashboard", "/signo","/_usuarios"];
+const routesWithLayout = ["/profile", "/dashboard", "/signo","/_usuarios","/register","/logs"];
 
 export default function MyApp({ Component, pageProps, router }) {
   const useLayout = routesWithLayout.some((path) =>
