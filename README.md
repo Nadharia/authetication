@@ -1,40 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Frontend Diccionario de Lenguas de Señas
 
-## Getting Started
+Este proyecto es la interfaz frontend de un diccionario interactivo de lenguas de señas, desarrollado con Next.js. Permite a los usuarios buscar y visualizar signos en lenguas de señas, facilitando el aprendizaje y la comunicación.
 
-First, run the development server:
+## 🚀 Comenzando
+
+Para ejecutar el proyecto localmente, sigue estos pasos:
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Nadharia/frontend-diccionario.git
+cd frontend-diccionario
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+# o
+yarn
+# o
+pnpm install
+```
+
+### 3. Ejecutar el servidor de desarrollo
 
 ```bash
 npm run dev
-# or
+# o
 yarn dev
-# or
+# o
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## 🎯 Funcionalidades principales
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+* Búsqueda interactiva de palabras o conceptos.
+* Visualización de signos en lengua de señas asociados a los términos.
+* Diseño responsivo para diferentes dispositivos.
+* Integración con backend (API) para obtener datos de las señas.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## 🛠 Tecnologías utilizadas
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* [Next.js](https://nextjs.org/) - Framework React para SSR y SPA.
+* [React](https://reactjs.org/)
+* Estilos con CSS / PostCSS o framework usado (indicar si aplica).
+* ESLint para calidad de código.
 
-## Learn More
+## 📂 Estructura del proyecto
 
-To learn more about Next.js, take a look at the following resources:
+```
+/frontend-diccionario
+├── components/       # Componentes reutilizables (buscador, tarjeta de seña, etc.)
+├── pages/            # Páginas de la aplicación
+├── public/           # Imágenes, videos o archivos estáticos
+├── styles/           # Archivos de estilos CSS o SCSS
+├── ...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## 📝 Cómo contribuir
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Si quieres aportar a este proyecto, abre un issue o un pull request. ¡Toda contribución es bienvenida!
 
-## Deploy on Vercel
+## 📄 Licencia
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más información.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+---
+---
+
